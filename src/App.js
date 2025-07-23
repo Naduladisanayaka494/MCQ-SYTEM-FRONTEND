@@ -13,7 +13,23 @@ import ExamAttempt from "./pages/ExamAttempt";
 import ExamResultDetails from "./pages/ExamResultDetails";
 import AdminPanel from "./pages/AdminPanel";
 
+// ✅ Protected admin route
+function ProtectedAdminRoute({ children }) {
+  const role = localStorage.getItem("role");
+  if (role !== "ADMIN") {
+    return (
+      <div className="text-center text-red-600 text-xl font-bold">
+        Access Denied: Admins Only
+      </div>
+    );
+  }
+  return children;
+}
+
+// ✅ Navbar with role check
 function Navbar({ onLogout }) {
+  const role = localStorage.getItem("role");
+
   return (
     <nav className="bg-blue-600 text-white px-4 py-3 flex justify-between items-center shadow-md">
       <h1 className="text-xl font-bold">MCQ System</h1>
@@ -21,9 +37,11 @@ function Navbar({ onLogout }) {
         <a href="/dashboard" className="hover:underline">
           Dashboard
         </a>
-        <a href="/admin" className="hover:underline">
-          Admin
-        </a>
+        {role === "ADMIN" && (
+          <a href="/admin" className="hover:underline">
+            Admin
+          </a>
+        )}
         <button
           onClick={onLogout}
           className="bg-red-500 hover:bg-red-600 px-4 py-1 rounded"
@@ -55,6 +73,7 @@ function AppLayout({ children }) {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("role");
     setIsLoggedIn(false);
     navigate("/login");
   };
@@ -83,7 +102,14 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/exam/:id" element={<ExamAttempt />} />
           <Route path="/result/:id" element={<ExamResultDetails />} />
-          <Route path="/admin" element={<AdminPanel />} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedAdminRoute>
+                <AdminPanel />
+              </ProtectedAdminRoute>
+            }
+          />
         </Routes>
       </AppLayout>
     </Router>

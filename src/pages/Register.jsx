@@ -6,12 +6,13 @@ export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("STUDENT"); // default role
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await register(name, email, password);
+      await register(name, email, password, role);
       alert("Registered successfully. Please log in.");
       navigate("/login");
     } catch (err) {
@@ -21,7 +22,6 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row items-center justify-center bg-gradient-to-r from-green-100 to-lime-100">
-      {/* Left Image */}
       <div className="hidden md:flex w-1/2 justify-center items-center p-8">
         <img
           src="https://cdn-icons-png.flaticon.com/512/906/906175.png"
@@ -30,7 +30,6 @@ export default function Register() {
         />
       </div>
 
-      {/* Right Form */}
       <div className="w-full md:w-1/2 flex justify-center items-center">
         <form
           onSubmit={handleRegister}
@@ -59,10 +58,20 @@ export default function Register() {
           <input
             type="password"
             placeholder="Password"
-            className="w-full px-4 py-2 mb-6 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-300 outline-none"
+            className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-300 outline-none"
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+
+          <select
+            className="w-full px-4 py-2 mb-6 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-300 outline-none"
+            onChange={(e) => setRole(e.target.value)}
+            value={role}
+            required
+          >
+            <option value="STUDENT">Student</option>
+            <option value="ADMIN">Admin</option>
+          </select>
 
           <button
             type="submit"
